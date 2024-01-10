@@ -1,6 +1,7 @@
 #сделать спавн в комнатах у двери
 #exe-file
 # +презентация + записка
+#dfsdf
 import pygame
 from pygame.locals import *
 from pygame import mixer
