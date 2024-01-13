@@ -1,6 +1,3 @@
-#сделать спавн в комнатах у двери
-#exe-file
-# +презентация + записка
 import pygame
 from pygame.locals import *
 from pygame import mixer
@@ -18,7 +15,7 @@ screen_height = 900
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Game')
 
-#peremenn
+#variables
 cell_size = 100
 clock = pygame.time.Clock()
 FPS = 165
@@ -28,7 +25,7 @@ faded = False
 audio_playing = True
 locatione = 1
 
-#rr game peremenn
+#rr game variables
 rr_game_st = 0
 rr_game_slot = 0
 rr_game_spin = 1
@@ -105,20 +102,21 @@ def draw_grid():
 	for line in range(0, 9):
 		pygame.draw.line(screen, (255, 255, 255), (0, line * cell_size), (screen_width, line * cell_size))
 
+#shading
 def dark():
 	dark_surface = pygame.Surface(screen.get_size())
-	dark_surface.set_alpha(0)  # начальная прозрачность
-	dark_surface.fill((0, 0, 0))  # цвет: чёрный
-	screen.blit(dark_surface, (0, 0))  # отображение затемненной поверхности
-	pygame.display.flip()  # обновление экрана
+	dark_surface.set_alpha(0)
+	dark_surface.fill((0, 0, 0))
+	screen.blit(dark_surface, (0, 0))
+	pygame.display.flip()
 
-	for i in range(0, 255, 5):  # увеличение прозрачности (затемнение)
+	for i in range(0, 255, 5):  #darking
 		dark_surface.set_alpha(i)
 		screen.blit(dark_surface, (0, 0))
 		pygame.display.flip()
 		pygame.time.delay(20)
 
-
+#update world data
 def reset_world(world):
 	nps_group.empty()
 	nps2_group.empty()
@@ -636,7 +634,7 @@ while running:
 					 "выход, для этого он должен взаимодействовать с персонажами",
 					 "которые находятся с ним в одном доме, но в разных комнатах.",
 					 "Герою предстоит выполнить несколько заданий, каждое из",
-					 "которых может стоить ему жизни.",
+					 "которых может стоить ему жизни (не всегда).",
 					 "За каждое выполненное заданиe герой будет получать монеты,",
 					 "которые помогут ему выбраться из дома."]
 		font = pygame.font.Font(None, 30)
