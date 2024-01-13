@@ -26,6 +26,7 @@ playing = 0
 menu = 0
 faded = False
 audio_playing = True
+locatione = 1
 
 #rr game peremenn
 rr_game_st = 0
@@ -39,6 +40,7 @@ spin_button_clicked = False
 background = pygame.image.load("data/background.png")
 menu_bg = pygame.image.load("data/menu_bg.png")
 game_over_image = pygame.image.load("data/game_over.jpg")
+ending_image = pygame.image.load("data/ending.jpg")
 #buttons
 button_e_image = pygame.image.load("data/press_e_button.png")
 button_r_image = pygame.image.load("data/press_r_button.png")
@@ -58,7 +60,8 @@ wardrobe_image = pygame.image.load("data/wardrobe.png")
 candle_image = pygame.image.load("data/candle.png")
 nps_1_image = pygame.image.load("data/main_room_hero.png")
 nps_2_image = pygame.image.load("data/ded_nps.png")
-nps_3_image = pygame.image.load("data/rr_hero.png")
+nps_3_alive_image = pygame.image.load("data/rr_hero.png")
+nps_3_dead_image = pygame.image.load("data/rr_hero_dead.png")
 gramophone_image = pygame.image.load("data/gramophone.png")
 #rr game images
 rr_game_fon_image = pygame.image.load("data/rr_game_fon.jpg")
@@ -306,6 +309,7 @@ class Player():
 				if pygame.sprite.spritecollide(self, exit_group, False):
 					door_fx.play()
 					pygame.time.delay(1300)
+					dark()
 					playing = 3
 			else:
 				if pygame.sprite.spritecollide(self, exit_group, False) and key[pygame.K_w]:
@@ -367,6 +371,7 @@ class World():
 
 		wall_image = pygame.image.load("data/wall.png")
 		box_image = pygame.image.load("data/box.png")
+		many_boxes_image = pygame.image.load("data/boxes.png")
 
 		row_count = 0
 		for row in data:
@@ -396,6 +401,12 @@ class World():
 				if tile == 6:
 					door4 = Door(col_count * cell_size, row_count * cell_size)
 					door4_group.add(door4)
+				if tile == 7:
+					image_rect = many_boxes_image.get_rect()
+					image_rect.x = col_count * cell_size
+					image_rect.y = row_count * cell_size
+					tile = (many_boxes_image, image_rect)
+					self.tile_list.append(tile)
 				if tile == 8:
 					exit = Door(col_count * cell_size, row_count * cell_size, close_door_image)
 					exit_group.add(exit)
@@ -409,7 +420,10 @@ class World():
 					nps2 = Nps(col_count * cell_size, row_count * cell_size, nps_2_image)
 					nps2_group.add(nps2)
 				if tile == 13:
-					nps3 = Nps(col_count * cell_size, row_count * cell_size, nps_3_image)
+					if your_shoot:
+						nps3 = Nps(col_count * cell_size, row_count * cell_size, nps_3_alive_image)
+					else:
+						nps3 = Nps(col_count * cell_size, row_count * cell_size, nps_3_dead_image)
 					nps3_group.add(nps3)
 				if tile == 21:
 					image_rect = wardrobe_image.get_rect()
@@ -670,13 +684,19 @@ while running:
 			screen.blit(background, (0, 0))
 			world_data = []
 			world = reset_world(worlds.world0)
+			if locatione == 1:
+				player.reset(750, 350)
+			if locatione == 2:
+				player.reset(750, 150)
+			if locatione == 3:
+				player.reset(150, 350)
+			locatione = 1
 			playing = 0
-			player.reset(750, 350)
 
 		#rr game
 		if playing == 2:
 			screen.blit(rr_game_fon_image, (0, 0))
-			rr_nps = pygame.transform.scale(nps_3_image, (600, 550))
+			rr_nps = pygame.transform.scale(nps_3_alive_image, (600, 550))
 			screen.blit(rr_nps, (screen_width // 2 - 300, screen_height // 2 - 200))
 			screen.blit(rr_game_table_image, (screen_width // 2 - 450, screen_height // 2 + 100))
 			screen.blit(rr_game_revolver_image, (screen_width // 2 + 175, screen_height // 2 + 90))
@@ -738,13 +758,13 @@ while running:
 				if rr_spin_button.draw_button() and spin_button_clicked == False:
 					spin_fx.play()
 					rr_game_spin = random.randint(1, 6)
-					print(rr_game_spin)
 					spin_button_clicked = True
 				if rr_shoot_button.draw_button() and spin_button_clicked:
 					if your_shoot:
 						if rr_game_spin == rr_game_slot:
 							shoot_fx.play()
 							pygame.time.delay(1000)
+							dark()
 							playing = 4
 						else:
 							false_shoot_fx.play()
@@ -762,8 +782,8 @@ while running:
 
 		#ending
 		if playing == 3:
-			screen.blit(rr_game_fon_image, (0, 0))
-			if player_exit_button.draw_button():
+			screen.blit(ending_image, (0, 0))
+			if menu_button.draw_button():
 				click_fx.play()
 				dark()
 				menu = 0
@@ -792,21 +812,34 @@ while running:
 			world_data = []
 			world = reset_world(worlds.world1)
 			playing = 0
-			player.reset(750, 350)
+			if locatione == 1:
+				player.reset(750, 650)
+			if locatione == 4:
+				player.reset(200, 350)
+			locatione = 2
+			playing = 0
 
 		if playing == 7:
 			screen.blit(background, (0, 0))
 			world_data = []
 			world = reset_world(worlds.world2)
+			if locatione == 1:
+				player.reset(1400, 350)
+			if locatione == 4:
+				player.reset(750, 150)
+			locatione = 3
 			playing = 0
-			player.reset(750, 350)
 
 		if playing == 8:
 			screen.blit(background, (0, 0))
 			world_data = []
 			world = reset_world(worlds.world3)
+			if locatione == 2:
+				player.reset(1400, 350)
+			if locatione == 3:
+				player.reset(750, 650)
+			locatione = 4
 			playing = 0
-			player.reset(750, 350)
 
 
 
